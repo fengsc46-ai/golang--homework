@@ -7,8 +7,8 @@ import "fmt"
 给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那两个整数
 */
 func twoSum(nums []int, target int) []int {
-	for i, _ := range nums {
-		for j, _ := range nums {
+	for i := range nums {
+		for j := range nums {
 			if i != j && nums[i]+nums[j] == target {
 				return []int{i, j}
 			}
