@@ -27,16 +27,16 @@ type Circle struct {
 	radius float64
 }
 
-func (r *Circle) Perimeter() float64 {
-	return r.radius * r.radius
+func (c *Circle) Perimeter() float64 {
+	return c.radius * c.radius
 }
 func (c *Circle) Area() float64 {
 	return (22 / 7.0) * (c.radius * c.radius)
 }
 
 func main() {
-	rect := Rectangle{10, 5}
-	circ := Circle{3}
+	var circ Shape = &Circle{3}
+	var rect Shape = &Rectangle{10, 5}
 	fmt.Println("Rectangle area:", rect.Area())
 	fmt.Println("Rectangle perimeter:", rect.Perimeter())
 	fmt.Println("Circle perimeter:", circ.Perimeter())
