@@ -14,8 +14,8 @@ type Post struct {
 	Comments   []Comment
 }
 
-// AfterCreate 为 Post 模型添加一个钩子函数，在文章创建时自动更新用户的文章数量统计字段。/**
-func (post *Post) AfterCreate(db *gorm.DB) (err error) {
+// BeforeCreate 为 Post 模型添加一个钩子函数，在文章创建时自动更新用户的文章数量统计字段。/**
+func (post *Post) BeforeCreate(db *gorm.DB) (err error) {
 	userId := post.UserID
 	user := &User{}
 	itx := db.Model(user).Where("id =?", userId).Update("post_num", gorm.Expr("post_num + ?", 1))
@@ -23,5 +23,6 @@ func (post *Post) AfterCreate(db *gorm.DB) (err error) {
 	if nil != itx.Error {
 		return itx.Error
 	}
+
 	return nil
 }

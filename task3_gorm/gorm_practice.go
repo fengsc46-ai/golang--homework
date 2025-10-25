@@ -10,7 +10,7 @@ func main() {
 	// create a database connection
 	db := database.CreateDb()
 	//insert data into the database
-	bean.InsertDB(db)
+	//bean.InsertDB(db)
 	var user bean.User
 	//使用Gorm查询某个用户发布的所有文章及其对应的评论信息。
 	tx := db.Preload("Posts.Comments").Find(&user, 1)
@@ -34,9 +34,21 @@ func main() {
 		panic(tx1.Error)
 	}
 	fmt.Printf("%v\n", post)
+
+	postNew := bean.Post{
+		Title:   "test",
+		Content: "test content",
+		UserID:  1,
+		Status:  true,
+		Comments: []bean.Comment{
+			{ContentText: "test comment1"},
+			{ContentText: "test comment2"},
+		},
+	}
+	db.Create(&postNew)
 	//print the result
 	//fmt.Println(user)
-	// close the database connection
+	//close the database connection
 	//defer func(sqlDB *gorm.DB) {
 	//	err := sqlDB.()
 	//	if err != nil {
