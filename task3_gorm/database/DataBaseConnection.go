@@ -15,7 +15,7 @@ func CreateDb() *gorm.DB {
 		panic(err)
 	}
 
-	bean.CreateTable(db)
+	CreateTable(db)
 	setDB(db)
 	return db
 }
@@ -34,4 +34,11 @@ func setDB(db *gorm.DB) {
 
 	// SetConnMaxLifetime 设置了可以重新使用连接的最大时间。
 	sqlDB.SetConnMaxLifetime(time.Hour)
+}
+
+func CreateTable(db *gorm.DB) {
+	err := db.AutoMigrate(&bean.User{}, &bean.Post{}, &bean.Comment{})
+	if err != nil {
+		panic(err)
+	}
 }

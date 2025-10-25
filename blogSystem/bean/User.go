@@ -1,36 +1,18 @@
 package bean
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type User struct {
 	gorm.Model
-	Name  string
-	Age   int
-	Posts []Post
+	username string
+	password string
+	email    string
+	Posts    []Post
 }
 
-type Post struct {
-	gorm.Model
-	Title    string
-	Content  string
-	UserID   uint `gorm:"foreignKey:UserId"`
-	Comments []Comment
-}
-
-type Comment struct {
-	gorm.Model
-	PostID      uint `gorm:"foreignKey:PostId"`
-	ContentText string
-}
-
-func CreateTable(db *gorm.DB) {
-	err := db.AutoMigrate(&User{}, &Post{}, &Comment{})
-	if err != nil {
-		panic(err)
-	}
-}
-
-// DB写入初始化数据
+//DB写入初始化数据
 //func InsertDB(db *gorm.DB) {
 //	user := User{
 //		Name: "John",
