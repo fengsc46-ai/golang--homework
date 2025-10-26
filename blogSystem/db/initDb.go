@@ -8,16 +8,18 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateDb() *gorm.DB {
+var DB *gorm.DB
+
+func InitDbConnection() {
 	dsn := "root:123456@tcp(localhost:3306)/mydatabase?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	var err error
+	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
 
-	CreateTable(db)
-	setDB(db)
-	return db
+	CreateTable(DB)
+	setDB(DB)
 }
 
 func setDB(db *gorm.DB) {
