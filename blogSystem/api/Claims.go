@@ -10,8 +10,8 @@ import (
 )
 
 type Claims struct {
-	UserID   uint   `json:"user_id"`
-	Username string `json:"username"`
+	UserID   uint   `json:"userId"`
+	Username string `json:"userName"`
 	jwt.StandardClaims
 }
 
@@ -24,7 +24,11 @@ func GenerateToken(userID uint, username string) (string, error) {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte("secret_key"))
+	signedToken, err := token.SignedString([]byte("secretKey"))
+	if err != nil {
+		return "", err
+	}
+	return signedToken, nil
 }
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -36,12 +40,14 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		var claims = Claims{}
+		token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 			}
-			return []byte("secret_key"), nil
+			return []byte("secretKey"), nil
 		})
+
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			c.Abort()

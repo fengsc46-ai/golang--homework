@@ -2,7 +2,7 @@ package main
 
 import (
 	"blogSystem/api"
-	"blogSystem/init"
+	"blogSystem/initial"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +23,7 @@ import (
 
 func main() {
 	// Initialize database connection
-	init.InitDbConnection()
+	initial.InitDbConnection()
 	// Initialize api routes
 	initWebRoute()
 

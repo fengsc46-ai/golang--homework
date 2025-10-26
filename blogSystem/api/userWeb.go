@@ -2,7 +2,7 @@ package api
 
 import (
 	"blogSystem/bean"
-	"blogSystem/init"
+	"blogSystem/initial"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,7 +24,7 @@ func Register(c *gin.Context) {
 	}
 	user.Password = string(hashedPassword)
 
-	if err := init.DB.Create(&user).Error; err != nil {
+	if err := initial.DB.Create(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 		return
 	}
@@ -41,7 +41,7 @@ func Login(c *gin.Context) {
 	}
 
 	var storedUser bean.User
-	if err := init.DB.Where("username = ?", user.Username).First(&storedUser).Error; err != nil {
+	if err := initial.DB.Where("username = ?", user.Username).First(&storedUser).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
 		return
 	}
@@ -52,14 +52,13 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := GenerateToken(user.ID, user.Username)
+	token, err := GenerateToken(storedUser.Model.ID, storedUser.Username)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
 	}
-	// 剩下的逻辑...
-	// 保存token到redis或其他缓存中
+
 	// 响应token给客户端
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }

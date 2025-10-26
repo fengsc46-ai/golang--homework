@@ -2,7 +2,7 @@ package api
 
 import (
 	"blogSystem/bean"
-	"blogSystem/init"
+	"blogSystem/initial"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +15,7 @@ func SavePost(c *gin.Context) {
 		return
 	}
 
-	if err := init.DB.Create(&post).Error; err != nil {
+	if err := initial.DB.Create(&post).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create post"})
 		return
 	}
@@ -24,7 +24,7 @@ func SavePost(c *gin.Context) {
 
 func QueryPostList(c *gin.Context) {
 	var posts []bean.Post
-	if err := init.DB.Find(&posts).Error; err != nil {
+	if err := initial.DB.Find(&posts).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -34,7 +34,7 @@ func QueryPostList(c *gin.Context) {
 func PostDetail(c *gin.Context) {
 	postId := c.Param("id")
 	var post bean.Post
-	if err := init.DB.First(&post, postId).Error; err != nil {
+	if err := initial.DB.First(&post, postId).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Post not found"})
 		return
 	}
@@ -45,11 +45,11 @@ func PostDetail(c *gin.Context) {
 func DeletePost(c *gin.Context) {
 	postId := c.Param("id")
 	var post bean.Post
-	if err := init.DB.First(&post, postId).Error; err != nil {
+	if err := initial.DB.First(&post, postId).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Post not found"})
 		return
 	}
-	if err := init.DB.Delete(&post).Error; err != nil {
+	if err := initial.DB.Delete(&post).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Post delete failed"})
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Post delete successfully"})
