@@ -13,7 +13,7 @@ type User struct {
 }
 
 //DB写入初始化数据
-//func InsertDB(db *gorm.DB) {
+//func InsertDB(init *gorm.DB) {
 //	user := User{
 //		Name: "John",
 //		Age:  25,
@@ -27,6 +27,6 @@ type User struct {
 //				Comments: []Comment{{ContentText: "This is my second comment"}}},
 //		},
 //	}
-//	db.Create(&user)
+//	init.Create(&user)
 //
 //}

@@ -10,7 +10,7 @@ func main() {
 	// create a database connection
 	db := database.CreateDb()
 	//insert data into the database
-	//bean.InsertDB(db)
+	//bean.InsertDB(init)
 	var user bean.User
 	//使用Gorm查询某个用户发布的所有文章及其对应的评论信息。
 	tx := db.Preload("Posts.Comments").Find(&user, 1)
@@ -54,5 +54,5 @@ func main() {
 	//	if err != nil {
 	//		panic(err)
 	//	}
-	//}(db)
+	//}(init)
 }

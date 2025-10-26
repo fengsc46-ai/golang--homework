@@ -1,8 +1,8 @@
-package web
+package api
 
 import (
 	"blogSystem/bean"
-	"blogSystem/db"
+	"blogSystem/init"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +14,7 @@ func SaveComment(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := db.DB.Create(&comment); err != nil {
+	if err := init.DB.Create(&comment).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create comment"})
 		return
 	}
@@ -24,7 +24,7 @@ func SaveComment(c *gin.Context) {
 func QueryCommentsByPostId(c *gin.Context) {
 	var comments []bean.Comment
 	postId := c.Param("postId")
-	if err := db.DB.Where("post_id = ?", postId).Find(&comments).Error; err != nil {
+	if err := init.DB.Where("post_id = ?", postId).Find(&comments).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query comments"})
 		return
 	}
