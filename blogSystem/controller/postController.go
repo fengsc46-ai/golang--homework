@@ -1,4 +1,4 @@
-package api
+package controller
 
 import (
 	"blogSystem/bean"
@@ -8,13 +8,27 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SavePost(c *gin.Context) {
-	var post bean.Post
-	if err := c.ShouldBindJSON(&post); err != nil {
+type PostController struct{}
+
+type PostRequest struct {
+	Id      uint   `json:"id"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	UserID  uint   `json:"userID"`
+}
+
+func (controller *PostController) SavePost(c *gin.Context) {
+	var request PostRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	post := bean.Post{
+		Title:   request.Title,
+		Content: request.Content,
+		UserID:  request.UserID,
+	}
 	if err := initial.DB.Create(&post).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create post"})
 		return
@@ -22,7 +36,7 @@ func SavePost(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Post create successfully"})
 }
 
-func QueryPostList(c *gin.Context) {
+func (controller *PostController) QueryPostList(c *gin.Context) {
 	var posts []bean.Post
 	if err := initial.DB.Find(&posts).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -31,7 +45,7 @@ func QueryPostList(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"posts": posts})
 }
 
-func PostDetail(c *gin.Context) {
+func (controller *PostController) PostDetail(c *gin.Context) {
 	postId := c.Param("id")
 	var post bean.Post
 	if err := initial.DB.First(&post, postId).Error; err != nil {
@@ -42,8 +56,12 @@ func PostDetail(c *gin.Context) {
 
 }
 
-func DeletePost(c *gin.Context) {
+func (controller *PostController) DeletePost(c *gin.Context) {
 	postId := c.Param("id")
+
+	//代补充对postId的合法性校验
+	//待补充对post和user的存在校验
+
 	var post bean.Post
 	if err := initial.DB.First(&post, postId).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Post not found"})

@@ -1,8 +1,9 @@
 package main
 
 import (
-	"blogSystem/api"
+	"blogSystem/controller"
 	"blogSystem/initial"
+	"blogSystem/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +25,7 @@ import (
 func main() {
 	// Initialize database connection
 	initial.InitDbConnection()
-	// Initialize api routes
+	// Initialize controller routes
 	initWebRoute()
 
 }
@@ -35,6 +36,11 @@ func initWebRoute() {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
+	// 创建控制器实例
+	userController := &controller.UserController{}
+	postController := &controller.PostController{}
+	commentController := &controller.CommentController{}
+
 	{
 		// 无需认证的接口分组
 		uAuthGroup := r.Group("/uAuthGroup")
@@ -43,24 +49,24 @@ func initWebRoute() {
 			c.String(200, "hello world!")
 		})
 		// 注册用户路由
-		uAuthGroup.POST("/register", api.Register)
+		uAuthGroup.POST("/register", userController.Register)
 		// 登录用户路由
-		uAuthGroup.POST("/login", api.Login)
+		uAuthGroup.POST("/login", userController.Login)
 	}
 
 	{
 		//需要认证的接口分组
 		authGroup := r.Group("/auth")
-		authGroup.Use(api.AuthMiddleware())
+		authGroup.Use(utils.AuthMiddleware())
 		// 文章相关路由
-		authGroup.GET("/postList", api.QueryPostList)
-		authGroup.GET("/postDetail/:id", api.PostDetail)
-		authGroup.POST("savePost", api.SavePost)
-		authGroup.DELETE("/deletePost/:id", api.DeletePost)
+		authGroup.GET("/postList", postController.QueryPostList)
+		authGroup.GET("/postDetail/:id", postController.PostDetail)
+		authGroup.POST("savePost", postController.SavePost)
+		authGroup.DELETE("/deletePost/:id", postController.DeletePost)
 
 		// 评论相关路由
-		authGroup.POST("/saveComment", api.SaveComment)
-		authGroup.POST("/queryCommentsByPostId/:postId", api.QueryCommentsByPostId)
+		authGroup.POST("/saveComment", commentController.SaveComment)
+		authGroup.POST("/queryCommentsByPostId/:postId", commentController.QueryCommentsByPostId)
 	}
 	// 启动服务器
 	err := r.Run(":9000")
