@@ -2,6 +2,8 @@ package initial
 
 import (
 	"blogSystem/bean"
+	"fmt"
+	"os"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -11,7 +13,18 @@ import (
 var DB *gorm.DB
 
 func InitDbConnection() {
-	dsn := "root:123456@tcp(localhost:3306)/mydatabase?charset=utf8mb4&parseTime=True&loc=Local"
+	// 从环境变量获取MySQL连接配置
+	dbHost := getEnv("DB_HOST", "localhost")
+	dbPort := getEnv("DB_PORT", "3306")
+	dbUser := getEnv("DB_USER", "root")
+	dbPassword := getEnv("DB_PASSWORD", "123456")
+	dbName := getEnv("DB_NAME", "mydatabase")
+
+	// 构建MySQL连接字符串
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		dbUser, dbPassword, dbHost, dbPort, dbName)
+
+	//dsn := "root:123456@tcp(localhost:3306)/mydatabase?charset=utf8mb4&parseTime=True&loc=Local"
 	var err error
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -20,6 +33,14 @@ func InitDbConnection() {
 
 	CreateTable(DB)
 	setDB(DB)
+}
+
+// getEnv 获取环境变量，如果不存在则返回默认值
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
 }
 
 func setDB(db *gorm.DB) {

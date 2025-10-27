@@ -4,8 +4,10 @@ import (
 	"blogSystem/controller"
 	"blogSystem/initial"
 	"blogSystem/utils"
+	"log/slog"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 /**
@@ -23,6 +25,10 @@ import (
 */
 
 func main() {
+	// 加载环境变量
+	if err := godotenv.Load(); err != nil {
+		slog.Error("No .env file found, using system environment variables")
+	}
 	// Initialize database connection
 	initial.InitDbConnection()
 	// Initialize controller routes
