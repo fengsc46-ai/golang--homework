@@ -67,6 +67,7 @@ func initWebRoute() {
 		// 文章相关路由
 		authGroup.GET("/postList", postController.QueryPostList)
 		authGroup.GET("/postDetail/:id", postController.PostDetail)
+		authGroup.POST("createPost", postController.CreatePost)
 		authGroup.POST("savePost", postController.SavePost)
 		authGroup.DELETE("/deletePost/:id", postController.DeletePost)
 

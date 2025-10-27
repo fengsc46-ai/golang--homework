@@ -10,15 +10,40 @@ import (
 
 type PostController struct{}
 
-type PostRequest struct {
+type PostUpdateRequest struct {
 	Id      uint   `json:"id"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
 	UserID  uint   `json:"userID"`
 }
 
+type PostCreateRequest struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	UserID  uint   `json:"userID"`
+}
+
+func (controller *PostController) CreatePost(c *gin.Context) {
+	var request PostCreateRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	post := bean.Post{
+		Title:   request.Title,
+		Content: request.Content,
+		UserID:  request.UserID,
+	}
+	if err := initial.DB.Create(&post).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create post"})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{"message": "Post create successfully"})
+}
+
 func (controller *PostController) SavePost(c *gin.Context) {
-	var request PostRequest
+	var request PostUpdateRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
